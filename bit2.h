@@ -1,5 +1,5 @@
 #ifndef BIT2_INCLUDED
-#define UARRAY_INCLUDED
+#define BIT2_INCLUDED
 #define T Bit2_T
 typedef struct T *T;
 
