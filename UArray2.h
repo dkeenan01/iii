@@ -1,13 +1,7 @@
 #ifndef UARRAY2_INCLUDED
 #define UARRAY2_INCLUDED
 #define T UArray2_T
-
-struct T {
-    int width,
-    int height,
-    int size,
-    UArray * elems;
-}
+typedef struct T *T;
 
 T UArray2_new(T t, int width, int height, int size);
 
