@@ -57,30 +57,29 @@ void * UArray2_at(T uarray2, int col, int row){
         return UArray_at(uarray2->elems, flat_index);
 }
 
-void UArray2_map_row_major(T uarray2, void apply(int col, int row, T uarray2, 
-     void* elem, void *cl), void *cl) {
+// void UArray2_map_row_major(A t, void apply(int col, int row, A a,  void *cl), 
+//         void *cl) {
 
-        assert(uarray2 && apply);
+// }
 
-        for (int row = 0; row < uarray2->height; row++) {
-                for (int col = 0; col < uarray2->width; col++) {
-                        apply(col, row, uarray2, 
-                                UArray2_at(uarray2, col, row), cl);
-                }
-        }
-}
 
-void UArray2_map_col_major(T uarray2, void apply(int col, int row, T uarray2,
-     void* elem, void *cl), void *cl) {
-        
-        assert(uarray2 && apply);
+// /* Description: 
+//         Applies a function to each element of the UArray2 by going across rows 
+//         first, hitting every element in the column and across by column.
+//    Input: 
+//         t - UArray2 type
+//         An apply function, to perform on each element, whose parameters are:
+//                 a 2d index: (col, row), t – UArray2 type, a void pointer to 
+//                 the current element, and a closure variable to pass 
+//                 information between each call.
+// 	the closure variable - used to pass extra information between each 
+//                 iteration.
+//    Expectations:
+// 	the UArray2 passed in is not null
+//         the apply function is not null
+//         the address of the UArray2 passed is the same as the instance 
+//         of the UArray2.                                                         */
+// void UArray2_map_col_major(A t, void apply(int col, int row, void *cl), 
+//         void *cl) {
 
-        for (int col = 0; col < uarray2->width; col++) {
-                for (int row = 0; row < uarray2->height; row++) {
-                        apply(col, row, uarray2, 
-                                UArray2_at(uarray2, col, row), cl);
-                }
-        }
-}
-
-#undef T
+// }
