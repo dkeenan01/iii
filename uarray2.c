@@ -57,11 +57,18 @@ void * UArray2_at(T uarray2, int col, int row){
         return UArray_at(uarray2->elems, flat_index);
 }
 
-// void UArray2_map_row_major(A t, void apply(int col, int row, A a,  void *cl), 
-//         void *cl) {
+void UArray2_map_row_major(T uarray2, void apply(int col, int row, T uarray2, 
+     void* elem, void *cl), void *cl) {
 
-// }
+        assert(uarray2 && apply);
 
+        for (int row = 0; row < uarray2->height; row++) {
+                for (int col = 0; col < uarray2->width; col++) {
+                        apply(col, row, uarray2, 
+                                UArray2_at(uarray2, col, row), cl);
+                }
+        }
+}
 
 // /* Description: 
 //         Applies a function to each element of the UArray2 by going across rows 
@@ -79,7 +86,9 @@ void * UArray2_at(T uarray2, int col, int row){
 //         the apply function is not null
 //         the address of the UArray2 passed is the same as the instance 
 //         of the UArray2.                                                         */
-// void UArray2_map_col_major(A t, void apply(int col, int row, void *cl), 
-//         void *cl) {
+// void UArray2_map_col_major(T uarray2, void apply(int col, int row, T uarray2,
+//      void* elem, void *cl), void *cl) {
 
 // }
+
+#undef T
