@@ -12,6 +12,7 @@ struct T {
 };
 
 T UArray2_new(int width, int height, int size) {
+        assert(width >= 0 && height >= 0);
         A array;
         NEW(array);
         array->width = width;
