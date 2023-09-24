@@ -76,6 +76,7 @@ void solve_row(int i, int j, UArray2_T a, void *elem, void *set) {
         (void) a, (void) j;
         //printf("[%d, %d]: %d\n", i, j, *(int*)elem);
         const char* atom_int = Atom_int(*(int*)elem);
+        // could raise memfailed
         Set_put(*((Set_T*) set), atom_int);
 
         if (i == 8) {
