@@ -18,12 +18,12 @@ T Bit2_new(int width, int height){
     NEW(bit2);
     bit2 -> width = width;
     bit2 -> height = height;
-    bit2 -> elems = Bit_new(width * length);
+    bit2 -> elems = Bit_new(width * height);
     return bit2;
 }
 void Bit2_free(T *bit2){
     assert(bit2 && *bit2);
-    Bit2_free(&((*bit2)->elems));
+    Bit_free(&((*bit2)->elems));
     FREE(*bit2);
 }
 
