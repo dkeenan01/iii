@@ -87,6 +87,4 @@ void Bit2_map_col_major(T bit2,
     }
 } 
 
-
-
 #undef T
