@@ -3,24 +3,23 @@
 #define A UArray2_T
 #include <uarray.h>
 
-typedef struct A *A;
+#define T UArray2_T
 
-struct A {
-    int width;
-    int height;
-    int size;
-    UArray_T elems;
-};
+typedef struct T *T;
 
-A UArray2_new(int width, int height, int size);
+T UArray2_new(int width, int height, int size);
+void UArray2_free(T *uarray2);
 
-void UArray2_free(A *uarray2);
-int UArray2_height(A uarray2);
-int UArray2_width(A uarray2);
-int UArray2_size(A uarray2);
-void * UArray2_at(A uarray2, int col, int row);
-void UArray2_map_row_major(A t, void apply(int col, int row, A a,  void *cl), void *cl);
-void UArray2_map_col_major(A t, void apply(int col, int row, void *cl), void *cl);
+int UArray2_height(T uarray2);
+int UArray2_width(T uarray2);
+int UArray2_size(T uarray2);
 
-#undef A
+void* UArray2_at(T uarray2, int col, int row);
+
+void UArray2_map_row_major(T uarray2, void apply(int col, int row, T uarray2,
+        void* elem, void *cl), void *cl);
+void UArray2_map_col_major(T uarray2, void apply(int col, int row, T uarray2, 
+        void* elem, void *cl), void *cl);
+
+#undef T
 #endif
