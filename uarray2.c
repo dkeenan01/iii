@@ -2,10 +2,16 @@
 #include <uarray.h>
 #include <mem.h>
 #include <assert.h>
+#define T UArray2_T
 
-#define A UArray2_T
+struct T {
+    int width;
+    int height;
+    int size;
+    UArray_T elems;
+};
 
-A UArray2_new(int width, int height, int size) {
+T UArray2_new(int width, int height, int size) {
         A array;
         NEW(array);
         array->width = width;
@@ -15,44 +21,44 @@ A UArray2_new(int width, int height, int size) {
         return array;
 }
 
-void UArray2_free(A *uarray2) {
+void UArray2_free(T *uarray2) {
         assert(uarray2 && *uarray2);
         UArray_free(&((*uarray2)->elems));
         FREE(*uarray2);
 }
 
-int UArray2_height(A uarray2) {
+int UArray2_height(T uarray2) {
         assert(uarray2);
         return uarray2->height;
 }
 
-int UArray2_width(A uarray2) {
+int UArray2_width(T uarray2) {
         assert(uarray2);
         return uarray2->width;
 }
 
-int UArray2_size(A uarray2) {
+int UArray2_size(T uarray2) {
         assert(uarray2);
         return uarray2->size;
 }
 
-int flattened_index(int col, int row, int width){
+int UArray2_flattened_index(int col, int row, int width){
         return width * row + col;
 }
 
-void * UArray2_at(A uarray2, int col, int row){
+void * UArray2_at(T uarray2, int col, int row){
         assert(uarray2);
 
         assert(col < uarray2->width && col >= 0);
         assert(row < uarray2->height && row >= 0);
 
-        int flat_index = flattened_index(col, row, uarray2->width);
+        int flat_index = UArray2_flattened_index(col, row, uarray2->width);
 
         return UArray_at(uarray2->elems, flat_index);
 }
 
-// void UArray2_map_row_major(A t, void apply(int col, int row, A a,  void *cl), 
-//         void *cl) {
+// void UArray2_map_row_major(T uarray2, void apply(int col, int row, T uarray2, 
+//      void* elem, void *cl), void *cl) {
 
 // }
 
@@ -73,7 +79,9 @@ void * UArray2_at(A uarray2, int col, int row){
 //         the apply function is not null
 //         the address of the UArray2 passed is the same as the instance 
 //         of the UArray2.                                                         */
-// void UArray2_map_col_major(A t, void apply(int col, int row, void *cl), 
-//         void *cl) {
+// void UArray2_map_col_major(T uarray2, void apply(int col, int row, T uarray2,
+//      void* elem, void *cl), void *cl) {
 
 // }
+
+#undef T
