@@ -4,10 +4,9 @@
 #include <pnmrdr.h>
 #include "uarray2.h"
 
-const int 
-
 static FILE *open_or_fail(char *filename, char *mode);
-
+void map_to_uarray2(int i, int j, UArray2_T a, void *elem, void *image);
+void print_elems(int i, int j, UArray2_T a, void *elem, void *cl);
 void read_input_file(FILE *file);
 
 int main(int argc, char *argv[]) {
@@ -27,11 +26,25 @@ int main(int argc, char *argv[]) {
 void read_input_file(FILE *file) {
         Pnmrdr_T image = Pnmrdr_new(file);
         Pnmrdr_mapdata image_header =  Pnmrdr_data(image);
-        assert(image_header.width == 9)
+        assert(image_header.width == 9);
+        assert(image_header.height == 9);
+        assert(image_header.denominator == 9);
+        
+        UArray2_T array = UArray2_new(9, 9, 4);
+        UArray2_map_row_major(array, map_to_uarray2, &image);
+        UArray2_map_row_major(array, print_elems, NULL);
 
-        printf("Image width: %u\n",image_header.width);
-        printf("Image height: %u\n",image_header.height);
-        printf("Image denominator: %u\n",image_header.denominator);
+        Pnmrdr_free(&image);
+}
+
+void map_to_uarray2(int i, int j, UArray2_T a, void *elem, void *image) {
+        (void) i, (void) j, (void) a;
+        *((int*)elem) = Pnmrdr_get(*((Pnmrdr_T*) image));
+}
+
+void print_elems(int i, int j, UArray2_T a, void *elem, void *cl) {
+        (void) a, (void) cl;
+        printf("Element at [%d,%d]: %d\n", i, j, *((int*)elem));
 }
 
 static FILE *open_or_fail(char *filename, char *mode) {
