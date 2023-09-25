@@ -69,13 +69,6 @@ bool check_sudoku(UArray2_T sudoku) {
         return data.success;
 }
 
-void valid_dimension(UArray2_T array) {
-        Set_T tmp_set = Set_new(0, NULL, NULL);
-        UArray2_map_col_major(array, solve_col, &tmp_set);
-        UArray2_map_row_major(array, solve_row, &tmp_set);
-        Set_free(&tmp_set);
-}
-
 void map_to_uarray2(int i, int j, UArray2_T a, void *elem, void *image) {
         (void) i, (void) j, (void) a;
         *((int*)elem) = Pnmrdr_get(*((Pnmrdr_T*) image));
@@ -100,6 +93,7 @@ void solve_col(int i, int j, UArray2_T a, void *elem, void *data) {
 
 void solve_row(int i, int j, UArray2_T a, void *elem, void *data) {
         (void) a, (void) j;
+        
         solution* curr_data = data;
         int* accum = &curr_data->sum;
         int val = *((int*)elem);
