@@ -12,27 +12,31 @@ void map_image(int i, int j, UArray2_T a, void *elem, void *image);
 void print_elems(int i, int j, UArray2_T a, void *elem, void *cl);
 void solve_col(int i, int j, UArray2_T a, void *elem, void *data);
 void solve_row(int i, int j, UArray2_T a, void *elem, void *data);
-bool incorrect_3x3(UArray_T uarray, int row, int col)
+bool incorrect_3x3(UArray2_T array, int row, int col);
 bool solve_small(UArray2_T array);
 bool check_sudoku(UArray2_T sudoku);
 
-typedef struct solution solution{
+struct solution {
         int sum;
         bool success;
-};
+}; 
+
+typedef struct solution solution;
 
 int main(int argc, char *argv[]) {
         assert(argc == 1 || argc == 2);
 
-        FILE *fp = (argc == 1) ? stdin : open_or_fail(argv[1], 'rb');
+        FILE *fp = (argc == 1) ? stdin : open_or_fail(argv[1], "rb");
         UArray2_T array = read_input_file(fp);
-
-        bool sudoku_solved = check_sudoku(array);
+        bool sudoku_solved = false;
+        if (UArray2_width(array) == 9) {
+                sudoku_solved = check_sudoku(array);
+        }
 
         UArray2_free(&array);
         fclose(fp);
 
-        printf("%s\n", (sudoku_solved) ? "Solved" : "Failed");
+        //printf("%s\n", (sudoku_solved) ? "Solved" : "Failed");
 
         return (sudoku_solved) ? EXIT_SUCCESS : EXIT_FAILURE;
 }
@@ -52,13 +56,18 @@ int main(int argc, char *argv[]) {
 UArray2_T read_input_file(FILE *file) {
         Pnmrdr_T image = Pnmrdr_new(file);
         Pnmrdr_mapdata image_header =  Pnmrdr_data(image);
-        assert(image_header.width == 9 && image_header.height == 9);
-        assert(image_header.denominator == 9);
-        
-        UArray2_T array = UArray2_new(9, 9, 4);
-        UArray2_map_row_major(array, map_image, &image);
-        Pnmrdr_free(&image);
+        assert(image_header.type == 2);
 
+        UArray2_T array;
+        if(image_header.width == 9 && image_header.height == 9 
+                && image_header.denominator == 9) {
+                array = UArray2_new(9, 9, 4);
+                UArray2_map_row_major(array, map_image, &image);
+        } else {
+                array = UArray2_new(0,0,1);
+        }
+
+        Pnmrdr_free(&image);
         return array;
 }
 
@@ -104,7 +113,7 @@ bool check_sudoku(UArray2_T sudoku) {
 *                       file contents from.
 *       
 */
-void map_to_uarray2(int i, int j, UArray2_T a, void *elem, void *image) {
+void map_image(int i, int j, UArray2_T a, void *elem, void *image) {
         (void) i, (void) j, (void) a;
         *((int*)elem) = Pnmrdr_get(*((Pnmrdr_T*) image));
 }
@@ -184,7 +193,7 @@ void solve_row(int i, int j, UArray2_T a, void *elem, void *data) {
 bool solve_small(UArray2_T array) {
         for (int row = 0; row < 9; row += 3) {
                 for (int col = 0; col < 9; col += 3) {
-                        if (incorrect_3x3(uarray, row, col)){
+                        if (incorrect_3x3(array, row, col)){
                                 return false;
                         }
                 }
@@ -193,7 +202,7 @@ bool solve_small(UArray2_T array) {
 }
 
 
-bool incorrect_3x3(UArray_T uarray, int row, int col){
+bool incorrect_3x3(UArray2_T array, int row, int col){
         int sum = 0;
         for (int i = row; i < row + 3; i++) {
                 for (int j = col; j < col + 3; j++) {
