@@ -8,14 +8,12 @@
 static int two_power(int power);
 static FILE *open_or_fail(char *filename, char *mode);
 UArray2_T read_input_file(FILE *file);
-void map_image(int i, int j, UArray2_T a, void *elem, void *image);
+void map_to_uarray2(int i, int j, UArray2_T a, void *elem, void *image);
+void print_elems(int i, int j, UArray2_T a, void *elem, void *cl);
 void solve_col(int i, int j, UArray2_T a, void *elem, void *data);
 void solve_row(int i, int j, UArray2_T a, void *elem, void *data);
 bool solve_small(UArray2_T array);
 bool check_sudoku(UArray2_T sudoku);
-
-// DEBUG
-void print_elems(int i, int j, UArray2_T a, void *elem, void *cl);
 
 struct solution {
         int sum;
