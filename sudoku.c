@@ -212,6 +212,9 @@ bool solve_small(UArray2_T array) {
 *               could raise excpetion if 2^(power-1) exceeds 32 bit int limit
 */
 static int two_power(int power) {
+        if (power > 32){
+                return -1;
+        }
         return (1 << (power - 1));
 }
 
