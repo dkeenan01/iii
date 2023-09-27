@@ -1,4 +1,6 @@
 .DS_Store
+.fullname
+.partner
 *.o
 *.ko
 *.obj
