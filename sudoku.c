@@ -12,6 +12,7 @@ void map_image(int i, int j, UArray2_T a, void *elem, void *image);
 void print_elems(int i, int j, UArray2_T a, void *elem, void *cl);
 void solve_col(int i, int j, UArray2_T a, void *elem, void *data);
 void solve_row(int i, int j, UArray2_T a, void *elem, void *data);
+bool incorrect_3x3(UArray_T uarray, int row, int col)
 bool solve_small(UArray2_T array);
 bool check_sudoku(UArray2_T sudoku);
 
@@ -23,7 +24,6 @@ typedef struct solution solution{
 int main(int argc, char *argv[]) {
         assert(argc == 1 || argc == 2);
 
-        char *filename;
         FILE *fp = (argc == 1) ? stdin : open_or_fail(argv[1], 'rb');
         UArray2_T array = read_input_file(fp);
 
@@ -184,19 +184,24 @@ void solve_row(int i, int j, UArray2_T a, void *elem, void *data) {
 bool solve_small(UArray2_T array) {
         for (int row = 0; row < 9; row += 3) {
                 for (int col = 0; col < 9; col += 3) {
-                        int sum = 0;
-                        for (int i = row; i < row + 3; i++) {
-                                for (int j = col; j < col + 3; j++) {
-                                        int val = *(int*)UArray2_at(array, i, j);
-                                        sum += two_power(val);
-                                }
-                        }
-                        if (sum != 511){
+                        if (incorrect_3x3(uarray, row, col)){
                                 return false;
                         }
                 }
         }
         return true;
+}
+
+
+bool incorrect_3x3(UArray_T uarray, int row, int col){
+        int sum = 0;
+        for (int i = row; i < row + 3; i++) {
+                for (int j = col; j < col + 3; j++) {
+                        int val = *(int*)UArray2_at(array, i, j);
+                        sum += two_power(val);
+                }
+        }
+        return sum != 511;
 }
 
 /*
@@ -212,6 +217,9 @@ bool solve_small(UArray2_T array) {
 *               could raise excpetion if 2^(power-1) exceeds 32 bit int limit
 */
 static int two_power(int power) {
+        if (power > 32){
+                return -1;
+        }
         return (1 << (power - 1));
 }
 
