@@ -24,7 +24,6 @@ typedef struct solution solution{
 int main(int argc, char *argv[]) {
         assert(argc == 1 || argc == 2);
 
-        char *filename;
         FILE *fp = (argc == 1) ? stdin : open_or_fail(argv[1], 'rb');
         UArray2_T array = read_input_file(fp);
 
