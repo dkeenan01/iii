@@ -8,7 +8,7 @@
 static int two_power(int power);
 static FILE *open_or_fail(char *filename, char *mode);
 UArray2_T read_input_file(FILE *file);
-void map_to_uarray2(int i, int j, UArray2_T a, void *elem, void *image);
+void map_image(int i, int j, UArray2_T a, void *elem, void *image);
 void print_elems(int i, int j, UArray2_T a, void *elem, void *cl);
 void solve_col(int i, int j, UArray2_T a, void *elem, void *data);
 void solve_row(int i, int j, UArray2_T a, void *elem, void *data);
@@ -52,7 +52,7 @@ UArray2_T read_input_file(FILE *file) {
         assert(image_header.denominator == 9);
         
         UArray2_T array = UArray2_new(9, 9, 4);
-        UArray2_map_row_major(array, map_to_uarray2, &image);
+        UArray2_map_row_major(array, map_image, &image);
         Pnmrdr_free(&image);
 
         return array;
