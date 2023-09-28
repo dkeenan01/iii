@@ -87,6 +87,8 @@ void print_bits(int i, int j, Bit2_T bm, int b, void *cl)
         FILE* outputfp = cl;
         if (i == Bit2_width(bm) - 1) {
                 fprintf(outputfp, "%d\n", b);
+        } else if(i != 0 && i % 35 == 0) {
+                fprintf(outputfp, "\n%d ", b);
         } else {
                 fprintf(outputfp, "%d ", b);
         }

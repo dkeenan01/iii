@@ -36,8 +36,6 @@ int main(int argc, char *argv[]) {
         UArray2_free(&array);
         fclose(fp);
 
-        //printf("%s\n", (sudoku_solved) ? "Solved" : "Failed");
-
         return (sudoku_solved) ? EXIT_SUCCESS : EXIT_FAILURE;
 }
 
@@ -225,9 +223,6 @@ bool incorrect_3x3(UArray2_T array, int row, int col){
 *               could raise excpetion if 2^(power-1) exceeds 32 bit int limit
 */
 static int two_power(int power) {
-        if (power > 32){
-                return -1;
-        }
         return (1 << (power - 1));
 }
 
