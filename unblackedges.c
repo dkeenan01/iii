@@ -129,7 +129,7 @@ void remove_blackedges(Bit2_T bitmap)
         Stack_T edgepixels = Stack_new();
         Bit2_map_row_major(bitmap, check_edges, edgepixels);
 
-        while(Stack_empty(edgepixels) == 0) {
+        while (Stack_empty(edgepixels) == 0) {
                 point* curr = Stack_pop(edgepixels);
                 add_neighbor(bitmap, edgepixels, curr->col - 1, curr->row);
                 add_neighbor(bitmap, edgepixels, curr->col + 1, curr->row);
