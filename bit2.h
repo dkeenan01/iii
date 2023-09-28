@@ -22,7 +22,7 @@ T Bit2_new(int width, int height);
  * Inputs: the address of the Bit2 to free
  *
  * Notes: returns nothing
- *        c.r.e. for the UArray2 to be null
+ *        c.r.e. for the Bit2 to be null
  *
  ************************/
 void Bit2_free(T* bit2);

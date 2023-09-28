@@ -198,7 +198,7 @@ void solve_row(int i, int j, UArray2_T a, void *elem, void *data)
 *               solve_small
 *
 *       details:
-*               checks if the smaller 3x3 subsquares of 9x9 sodoku contain all 
+*               checks if the smaller 3x3 subsquares of 9x9 sudoku contain all 
 *               numbers 1-9.
 *       inputs:
 *               array - UArray2 to run the check on.
@@ -217,7 +217,20 @@ bool solve_small(UArray2_T array)
         return true;
 }
 
-
+/*
+*               incorrect_3x3
+*       
+*       checks if 3x3 box of uarray starting at row col and going right and 
+*       down 3 is a valid sudoku solution.
+*       
+*       inputs:
+*               array - UArray2 to check subsquare of
+*               row - row of position to start subsquare of (top left corner)
+*               col - row of position to start subsquare of (top left corner)
+*       returns:
+*               true if incorrect 3x3 square
+*               false if correct 3x3 square
+*/
 bool incorrect_3x3(UArray2_T array, int row, int col)
 {
         int sum = 0;
@@ -233,14 +246,15 @@ bool incorrect_3x3(UArray2_T array, int row, int col)
 /*
 *               two_power
 *      
-*       details:
-*               computes the 2^power-1 using bitwise operations
+*       computes the 2^(power-1)
+
 *       input:
 *               power - int to raise 2 to.
 *       returns:
 *               int for 2^(power - 1)
-*       Exceptions:
-*               could raise excpetion if 2^(power-1) exceeds 32 bit int limit
+*       details:
+*               if input = 33 then negative max int
+*               if input > 33 then 0 is returned
 */
 static int two_power(int power) 
 {
