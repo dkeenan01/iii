@@ -20,7 +20,7 @@ typedef struct T *T;
 T UArray2_new(int width, int height, int size);
 
 /********** UArray2_free ********
- *      initializes a new 2d unboxed array with size width*height*size
+ *      Frees a the memory associated with a UArray2
  *
  * Inputs: the address of the UArray2 to free
  *
@@ -109,7 +109,7 @@ void* UArray2_at(T uarray2, int col, int row);
  *              An apply function, to perform on each element, whose parameters 
  *              are:
  *                      (col, row) - a 2d index
- *                      t - UArray2 type, a void 
+ *                      t - UArray2 type, a void pointer
  *                      elem - pointer to the current element
  *                      cl - closure variable to pass information between each 
  *                           call.
@@ -135,7 +135,7 @@ void UArray2_map_row_major(T uarray2, void apply(int col, int row, T uarray2,
  *              An apply function, to perform on each element, whose parameters 
  *              are:
  *                      (col, row) - a 2d index
- *                      t - UArray2 type, a void 
+ *                      t - UArray2 type, a void pointer
  *                      elem - pointer to the current element
  *                      cl - closure variable to pass information between each 
  *                           call.
