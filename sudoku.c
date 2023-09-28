@@ -109,9 +109,8 @@ bool check_sudoku(UArray2_T sudoku) {
 *               a - not used (used to match function params)
 *               elem - void pointer that is an integer pointer to set that 
 *                       element to value read from image.
-*               image - void pointer really pointer to Pnmrdr_T type to get 
-*                       file contents from.
-*       
+*               image - void pointer points to Pnm reader with the image
+*
 */
 void map_image(int i, int j, UArray2_T a, void *elem, void *image) {
         (void) i, (void) j, (void) a;

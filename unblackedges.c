@@ -1,3 +1,15 @@
+/**************************************************************
+ *
+ *                     unblackedges.c
+ *
+ *     Assignment: hw2 iii
+ *     Authors:  Dylan Keenan (dkeena01), Cooper Golem (cgolem01)
+ *     Date:     09/28/2023
+ *
+ *     implements an program that removes black edges pixels from
+ *     a pbm file and outputs the new image to standard output
+ *
+ **************************************************************/
 #include <stdlib.h>
 #include <stdio.h>
 #include <assert.h>
@@ -18,76 +30,128 @@ static FILE *open_or_fail(char *filename, char *mode);
 Bit2_T pbmread(FILE* inputfp);
 void pbmwrite(FILE* outputfp, Bit2_T bitmap);
 void map_image(int i, int j, Bit2_T bitmap, int b, void *image);
-Stack_T check_edges(Bit2_T bitmap);
-void remove_blackedges(Bit2_T bitmap, Stack_T blackpixel);
-bool check_range(point* curr, int max_col, int max_row);
-void add_neighbor(Bit2_T bitmap, Stack_T blackpixel, point* p);
+void check_edges(int col, int row, Bit2_T bitmap, int b, void *stack);
+void remove_blackedges(Bit2_T bitmap);
+bool check_range(int i, int j, int max_col, int max_row);
+void add_neighbor(Bit2_T bitmap, Stack_T blackpixel, int col, int row);
 void print_bits(int i, int j, Bit2_T bm, int b, void *cl);
 
-int main(int argc, char *argv[]) {
+int main(int argc, char *argv[])
+{
         assert(argc == 1 || argc == 2);
-        (void) argv;
 
+        /* open/close file - file data in bit2 */
         FILE *fp = (argc == 1) ? stdin : open_or_fail(argv[1], "rb");
         Bit2_T bitmap = pbmread(fp);
-        Stack_T p_stack = check_edges(bitmap);
-        remove_blackedges(bitmap, p_stack);
-        FILE *out = fopen("out.pbm", "w");
-        Bit2_map_row_major(bitmap, print_bits, out);
-
-        Bit2_free(&bitmap);
         fclose(fp);
-        fclose(out);
+
+        /* get all black edge pixels and remove them */
+        remove_blackedges(bitmap);
+
+        /* output corrected image and free its storage */
+        pbmwrite(stdout, bitmap);
+        Bit2_free(&bitmap);
 
         return EXIT_SUCCESS;
 }
 
-void print_bits(int i, int j, Bit2_T bm, int b, void *cl) 
+/********** pbmwrite ********
+ *      write a pbm image to a given output
+ *
+ * Inputs: a pointer to the output file, the image raster as a bit2
+ *
+ * Notes: returns nothing, used only to print the image
+ *
+ ************************/
+void pbmwrite(FILE* outputfp, Bit2_T bitmap)
 {
-        (void) i, (void) j, (void) bm, (void) cl;
-        //FILE* outputfp = cl;
-        fprintf(stderr, "%d", b);
-        if (i == Bit2_width(bm) - 1) {
-                fprintf(stderr, "\n");
-        }
-}
-
-
-Stack_T check_edges(Bit2_T bitmap) {
+        fprintf(outputfp, "P1\n");
         int width = Bit2_width(bitmap);
         int height = Bit2_height(bitmap);
-        Stack_T stack = Stack_new();
-        for (int row = 0; row < height; row ++) {
-                for (int col = 0; col < width; col ++) {
-                        if (col == 0 || row == 0 || col == width -1 || 
-                                row == height - 1) {
-                                int bit_val = Bit2_get(bitmap, col, row);
-                                if (bit_val == 1) {
-                                        Bit2_put(bitmap, col, row, 0);
-                                        point* curr_point = NEW(curr_point);
-                                        curr_point->col = col;
-                                        curr_point->row = row;
-                                        Stack_push(stack, curr_point);
-                                }
-                        }
-                }
-        }
-        return stack;
+        fprintf(outputfp, "%d %d\n", width, height);
+        Bit2_map_row_major(bitmap, print_bits, outputfp);
 }
 
-/*
-*               read_input_file
-*
-*       details:
-*               Open file with Pnmrdr reader and create Uarray2 with pixel data
-*               Hanson assertion if the image height and width are not 9
-*               or if the max_val of the pixels is not 9.
-*       inputs:
-*               FILE type to read from
-*       returns:
-*               UArray2_T with pixel data set
-*/
-Bit2_T pbmread(FILE *file) {
+/********** print_bits ********
+ *      prints the rows of the pbm image raster
+ *
+ * Inputs: 2d index (i, j), bit2 image raster, current value of the bit
+ *      at i, j, void pointer to the output file
+ *
+ * Notes: returns nothing, used with bit2 map_row_major to set values
+ *
+ ************************/
+void print_bits(int i, int j, Bit2_T bm, int b, void *cl) 
+{
+        (void) j;
+        FILE* outputfp = cl;
+        if (i == Bit2_width(bm) - 1) {
+                fprintf(outputfp, "%d\n", b);
+        } else {
+                fprintf(outputfp, "%d ", b);
+        }
+}
+
+/********** check_edges ********
+ *      changes black border pixels to white, adds pixels to stack to
+ *              check its neighbors
+ *
+ * Inputs: a 2d index (col, row), bit2 image raster, current value of 
+ *      the bit at (col, row), void pointer to a stack for neighbor check
+ *
+ * Notes: returns nothing, used with bit2 map_row_major get black edges
+ *
+ ************************/
+void check_edges(int col, int row, Bit2_T bitmap, int b, void *stack) {
+        Stack_T edgepixels = stack;
+        int width = Bit2_width(bitmap);
+        int height = Bit2_height(bitmap);
+        if (col == 0 || row == 0 || col == width -1 || row == height - 1) {
+                if (b == 1) {
+                        Bit2_put(bitmap, col, row, 0);
+                        point* pixel = NEW(pixel);
+                        *pixel = (point) {col, row};
+                        Stack_push(edgepixels, pixel);
+                }
+        }
+}
+
+/********** remove_blackedges ********
+ *      sets any black edges pixel to white and checks neighbors
+ * 
+ * Inputs: an image raster as a bit2, a stack to hold black edges pixels
+ *
+ * Notes:
+ *      returns nothing, frees the stack its given but not bit2
+ ************************/
+void remove_blackedges(Bit2_T bitmap)
+{
+        Stack_T edgepixels = Stack_new();
+        Bit2_map_row_major(bitmap, check_edges, edgepixels);
+
+        while(Stack_empty(edgepixels) == 0) {
+                point* curr = Stack_pop(edgepixels);
+                add_neighbor(bitmap, edgepixels, curr->col - 1, curr->row);
+                add_neighbor(bitmap, edgepixels, curr->col + 1, curr->row);
+                add_neighbor(bitmap, edgepixels, curr->col, curr->row - 1);
+                add_neighbor(bitmap, edgepixels, curr->col, curr->row + 1);
+                FREE(curr);
+        }
+        Stack_free(&edgepixels);
+}
+
+/********** pbmread ********
+ *      Open file with Pnmrdr reader and create bit2 with pixel data
+ *
+ * Inputs: the pbm image file to be read from
+ *
+ * Returns: the image raster as a bit2
+ *
+ * Notes: Hanson assertion if the image height and width are 0 or if 
+ *      the type of image in not a pbm.
+ ************************/
+Bit2_T pbmread(FILE *file)
+{
         Pnmrdr_T image = Pnmrdr_new(file);
         Pnmrdr_mapdata image_header =  Pnmrdr_data(image);
         assert(image_header.width != 0 && image_header.height != 0);
@@ -100,91 +164,75 @@ Bit2_T pbmread(FILE *file) {
         return bitmap;
 }
 
-void remove_blackedges(Bit2_T bitmap, Stack_T blackpixel) {
-        while(Stack_empty(blackpixel) == 0) {
-                point* curr = Stack_pop(blackpixel);
-                point* left_neighbor = NEW(left_neighbor);
-                point* right_neighbor = NEW(right_neighbor);
-                point* top_neighbor = NEW(top_neighbor);
-                point* bottom_neighbor = NEW(bottom_neighbor);
-                left_neighbor->col = curr->col - 1;
-                left_neighbor->row = curr->row;
-                right_neighbor->col = curr->col + 1;
-                right_neighbor->row = curr->row;
-                top_neighbor->col = curr->col;
-                top_neighbor->row = curr->row - 1;
-                bottom_neighbor->col = curr->col;
-                bottom_neighbor->row = curr->row + 1;
-                add_neighbor(bitmap, blackpixel,left_neighbor);
-                add_neighbor(bitmap, blackpixel,right_neighbor);
-                add_neighbor(bitmap, blackpixel,top_neighbor);
-                add_neighbor(bitmap, blackpixel,bottom_neighbor);
-                FREE(curr);
-        }
-        Stack_free(&blackpixel);
-}
 
-void add_neighbor(Bit2_T bitmap, Stack_T blackpixel, point* p) {
+
+/********** add_neighbor ********
+ *      sets a black edge pixel to white and adds it to the stack
+ * 
+ * Inputs: an image raster as a bit2, a stack to hold black edges pixels,
+ *      and the 2d index of the current pixels
+ *
+ * Notes:
+ *      returns nothing, frees the stack its given but not bit2
+ ************************/
+void add_neighbor(Bit2_T bitmap, Stack_T blackpixel, int col, int row) 
+{
         int max_col = Bit2_width(bitmap);
         int max_row = Bit2_height(bitmap);
-        if (check_range(p, max_col, max_row) && Bit2_get(bitmap, p->col, p->row) == 1) {
-                Bit2_put(bitmap, p->col, p->row, 0);
-                Stack_push(blackpixel, p);
-        } else {
-                FREE(p);
+
+        if (check_range(col, row, max_col, max_row) 
+                && Bit2_get(bitmap, col, row) == 1) {
+                point* pixel = NEW(pixel);
+                *pixel = (point) { col, row };
+                Bit2_put(bitmap, pixel->col, pixel->row, 0);
+                Stack_push(blackpixel, pixel);
         }
 }
 
-bool check_range(point* curr, int max_col, int max_row) {
-        if (curr->col >= max_col || curr->row >= max_row) {
+/********** check_range ********
+ *      checks if a 2d index in range given a max
+ * 
+ * Inputs: a 2d index col, row and the max for each dimension
+ *
+ * Returns: a boolean, true if in range, false otherwise
+ *
+ ************************/
+bool check_range(int i, int j, int max_col, int max_row) 
+{
+        if (i >= max_col || j >= max_row || i < 0 || j < 0) {
                 return false;
         }
-
-        if (curr->col < 0 || curr->row < 0) {
-                return false;
-        }
-
         return true;
 }
 
-/*
-*               map_image
-*
-*       details:
-*               Gets a pixel value from the Pnmrdr type passed in and writes 
-*               that value to the elem parameter. Maps each element of the 
-*               image file to a Bit2 when map row major is called using this 
-*               mapping function.
-*       inputs:
-*               i - not used (used to match function params)
-*               j - not used (used to match function params)
-*               a - not used (used to match function params)
-*               int n - the current value fo the bit at i, j
-*               image - void pointer really pointer to Pnmrdr_T type to get 
-*                       file contents from.
-*       
-*/
-void map_image(int i, int j, Bit2_T bm, int n, void *image) {
+/********** map_image ********
+ *      Uses pnm reader to get image raster values and store in bit2
+ * 
+ * Inputs: a 2d index (i, j), bit2 image raster, current value of the bit
+ *      at i, j (not used), void pointer to pnm reader with the image
+ *
+ * Notes: returns nothing, used with bit2 map_row_major to set values
+ *
+ ************************/
+void map_image(int i, int j, Bit2_T bm, int n, void *image) 
+{
         (void) n;
         int value = Pnmrdr_get(*((Pnmrdr_T*) image));
         Bit2_put(bm, i, j, value);
 }
 
-
-/*
-*               open_or_fail
-*
-*       details:
-*               opens file or aborts program
-*       inputs:
-*               filename - character pointer, filename to open
-*               mode - mode to open file with (Ex: "rb")
-*       outputs:
-*               pointer to the opened FILE
-*       Raises Hanson assertion if filename could not be opened.
-*       
-*/
-static FILE *open_or_fail(char *filename, char *mode) {
+/********** map_image ********
+ *      opens file or aborts program
+ * 
+ * Inputs: a cstring filename, and the mode to open the file with
+ *
+ * Returns a pointer to the open file
+ *
+ * Notes: c.r.e if filename could not be opened.
+ *
+ ************************/
+static FILE *open_or_fail(char *filename, char *mode) 
+{
         FILE *fp = fopen(filename, mode);
         assert(fp);
         return fp;
