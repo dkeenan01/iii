@@ -26,7 +26,6 @@ struct point {
 
 typedef struct point point;
 
-
 Bit2_T pbmread(FILE* inputfp);
 static FILE *open_or_fail(char *filename, char *mode);
 bool check_range(int i, int j, int max_col, int max_row);
@@ -36,7 +35,6 @@ void print_bits(int i, int j, Bit2_T bm, int b, void *cl);
 void map_image(int i, int j, Bit2_T bitmap, int b, void *image);
 void check_edges(int col, int row, Bit2_T bitmap, int b, void *stack);
 void add_neighbor(Bit2_T bitmap, Stack_T edgepixels, int col, int row);
-
 
 int main(int argc, char *argv[])
 {
@@ -165,8 +163,6 @@ Bit2_T pbmread(FILE *file)
 
         return bitmap;
 }
-
-
 
 /********** add_neighbor ********
  *      sets a black edge pixel to white and adds it to the stack
