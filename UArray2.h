@@ -1,6 +1,5 @@
 #ifndef UARRAY2_INCLUDED
 #define UARRAY2_INCLUDED
-#define A UArray2_T
 #include <uarray.h>
 
 #define T UArray2_T
