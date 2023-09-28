@@ -3,7 +3,7 @@
  *                     unblackedges.c
  *
  *     Assignment: hw2 iii
- *     Authors:  Dylan Keenan (dkeena01), Cooper Golem (cgolem01)
+ *     Authors:  Dylan Keenan (dkeena01), Cooper Golemme (cgolem01)
  *     Date:     09/28/2023
  *
  *     implements an program that removes black edges pixels from
