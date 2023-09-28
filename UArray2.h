@@ -7,7 +7,27 @@
 
 typedef struct T *T;
 
+/********** UArray2_new ********
+ *      initializes a new 2d unboxed array with size width*height*size
+ *
+ * Inputs: width, height of 2d array, and the size of each elem
+ *
+ * Return: an initalized 2d UArray2
+ *
+ * Notes: c.r.e if memory cannot be allocated
+ *
+ ************************/
 T UArray2_new(int width, int height, int size);
+
+/********** UArray2_free ********
+ *      initializes a new 2d unboxed array with size width*height*size
+ *
+ * Inputs: the address of the UArray2 to free
+ *
+ * Notes: returns nothing, frees memory of the UArray2. c.re. for the
+ *      UArray2 to be null
+ *
+ ************************/
 void UArray2_free(T *uarray2);
 
 int UArray2_height(T uarray2);
