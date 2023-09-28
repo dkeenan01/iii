@@ -23,7 +23,8 @@ struct solution {
 
 typedef struct solution solution;
 
-int main(int argc, char *argv[]) {
+int main(int argc, char *argv[]) 
+{
         assert(argc == 1 || argc == 2);
 
         FILE *fp = (argc == 1) ? stdin : open_or_fail(argv[1], "rb");
@@ -35,8 +36,6 @@ int main(int argc, char *argv[]) {
 
         UArray2_free(&array);
         fclose(fp);
-
-        //printf("%s\n", (sudoku_solved) ? "Solved" : "Failed");
 
         return (sudoku_solved) ? EXIT_SUCCESS : EXIT_FAILURE;
 }
@@ -53,7 +52,8 @@ int main(int argc, char *argv[]) {
 *       returns:
 *               UArray2_T with pixel data set
 */
-UArray2_T read_input_file(FILE *file) {
+UArray2_T read_input_file(FILE *file) 
+{
         Pnmrdr_T image = Pnmrdr_new(file);
         Pnmrdr_mapdata image_header =  Pnmrdr_data(image);
         assert(image_header.type == 2);
@@ -83,7 +83,8 @@ UArray2_T read_input_file(FILE *file) {
 *       returns:
 *               True if Uarray2 is a valid sudoku solution
 */
-bool check_sudoku(UArray2_T sudoku) {
+bool check_sudoku(UArray2_T sudoku) 
+{
         solution data;
         data.sum = 0;
         data.success = true;
@@ -112,7 +113,8 @@ bool check_sudoku(UArray2_T sudoku) {
 *               image - void pointer points to Pnm reader with the image
 *
 */
-void map_image(int i, int j, UArray2_T a, void *elem, void *image) {
+void map_image(int i, int j, UArray2_T a, void *elem, void *image) 
+{
         (void) i, (void) j, (void) a;
         *((int*)elem) = Pnmrdr_get(*((Pnmrdr_T*) image));
 }
@@ -132,7 +134,8 @@ void map_image(int i, int j, UArray2_T a, void *elem, void *image) {
 *                      validate solution.
 *       
 */
-void solve_col(int i, int j, UArray2_T a, void *elem, void *data) {
+void solve_col(int i, int j, UArray2_T a, void *elem, void *data) 
+{
         (void) a, (void) i;
         solution* curr_data = data;
         int* accum = &curr_data->sum;
@@ -162,7 +165,8 @@ void solve_col(int i, int j, UArray2_T a, void *elem, void *data) {
 *                      validate solution.
 *       
 */
-void solve_row(int i, int j, UArray2_T a, void *elem, void *data) {
+void solve_row(int i, int j, UArray2_T a, void *elem, void *data) 
+{
         (void) a, (void) j;
         
         solution* curr_data = data;
@@ -189,7 +193,8 @@ void solve_row(int i, int j, UArray2_T a, void *elem, void *data) {
 *       returns:
 *               true if the subsquares are valid
 */
-bool solve_small(UArray2_T array) {
+bool solve_small(UArray2_T array) 
+{
         for (int row = 0; row < 9; row += 3) {
                 for (int col = 0; col < 9; col += 3) {
                         if (incorrect_3x3(array, row, col)){
@@ -201,7 +206,8 @@ bool solve_small(UArray2_T array) {
 }
 
 
-bool incorrect_3x3(UArray2_T array, int row, int col){
+bool incorrect_3x3(UArray2_T array, int row, int col)
+{
         int sum = 0;
         for (int i = row; i < row + 3; i++) {
                 for (int j = col; j < col + 3; j++) {
@@ -224,10 +230,8 @@ bool incorrect_3x3(UArray2_T array, int row, int col){
 *       Exceptions:
 *               could raise excpetion if 2^(power-1) exceeds 32 bit int limit
 */
-static int two_power(int power) {
-        if (power > 32){
-                return -1;
-        }
+static int two_power(int power) 
+{
         return (1 << (power - 1));
 }
 
@@ -244,8 +248,9 @@ static int two_power(int power) {
 *       Raises Hanson assertion if filename could not be opened.
 *       
 */
-static FILE *open_or_fail(char *filename, char *mode) {
+static FILE *open_or_fail(char *filename, char *mode) 
+{
         FILE *fp = fopen(filename, mode);
-        assert(fp);
+        assert(fp != NULL);
         return fp;
 }
