@@ -1,0 +1,21 @@
+## Names:
+
+Cooper Golemme (cgolem01)
+Dylan Keenan (dkeena01)
+
+## Acknowledgements:
+
+We asked TAs in office hours for help with understanding the assignment and
+some issues we encountered.
+We used stack overflow for tracing valgrind issues.
+We used math stack exchange to come up with our sudoku solver solution.
+We consulted Hanson's guide to C for documentation of different data
+structures.
+
+## Implemented:
+
+We have implemented all parts of the spec.
+
+## Time Estimate:
+
+20 hours
