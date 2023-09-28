@@ -234,6 +234,6 @@ void map_image(int i, int j, Bit2_T bm, int n, void *image)
 static FILE *open_or_fail(char *filename, char *mode) 
 {
         FILE *fp = fopen(filename, mode);
-        assert(fp);
+        assert(fp != NULL);
         return fp;
 }
