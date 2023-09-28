@@ -26,15 +26,17 @@ struct point {
 
 typedef struct point point;
 
-static FILE *open_or_fail(char *filename, char *mode);
+
 Bit2_T pbmread(FILE* inputfp);
+static FILE *open_or_fail(char *filename, char *mode);
+bool check_range(int i, int j, int max_col, int max_row);
+void remove_blackedges(Bit2_T bitmap);
 void pbmwrite(FILE* outputfp, Bit2_T bitmap);
+void print_bits(int i, int j, Bit2_T bm, int b, void *cl);
 void map_image(int i, int j, Bit2_T bitmap, int b, void *image);
 void check_edges(int col, int row, Bit2_T bitmap, int b, void *stack);
-void remove_blackedges(Bit2_T bitmap);
-bool check_range(int i, int j, int max_col, int max_row);
-void add_neighbor(Bit2_T bitmap, Stack_T blackpixel, int col, int row);
-void print_bits(int i, int j, Bit2_T bm, int b, void *cl);
+void add_neighbor(Bit2_T bitmap, Stack_T edgepixels, int col, int row);
+
 
 int main(int argc, char *argv[])
 {
@@ -175,7 +177,7 @@ Bit2_T pbmread(FILE *file)
  * Notes:
  *      returns nothing, frees the stack its given but not bit2
  ************************/
-void add_neighbor(Bit2_T bitmap, Stack_T blackpixel, int col, int row) 
+void add_neighbor(Bit2_T bitmap, Stack_T edgepixels, int col, int row) 
 {
         int max_col = Bit2_width(bitmap);
         int max_row = Bit2_height(bitmap);
@@ -185,7 +187,7 @@ void add_neighbor(Bit2_T bitmap, Stack_T blackpixel, int col, int row)
                 point* pixel = NEW(pixel);
                 *pixel = (point) { col, row };
                 Bit2_put(bitmap, pixel->col, pixel->row, 0);
-                Stack_push(blackpixel, pixel);
+                Stack_push(edgepixels, pixel);
         }
 }
 
